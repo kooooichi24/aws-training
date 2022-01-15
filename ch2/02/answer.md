@@ -3,7 +3,7 @@
 [ここ](../README.md#02.)
 
 ## 手順
-1. a
+1. servelessの環境構築
     ```bash
     $ npm install -g serverless
 
@@ -12,18 +12,25 @@
     Plugin: 5.5.3
     SDK: 4.3.0
     Components: 3.18.1
-
+    ```
+2. プロジェクト作成
+    ```sh
     $ serverless create --template aws-nodejs --name sls-lambda-hello-world --path sls-lambda-hello-world
     Serverless: Generating boilerplate...
     Serverless: Generating boilerplate in "/Users/furukawakoichi/git/aws-training/ch2/02/sls-lambda-hello-world"
     Serverless: Successfully generated boilerplate for template: "aws-nodejs"
-
+    ```
+3. デプロイ&実行
+    ```sh
     $ sls deploy
     $ sls invoke -f hello
     {
         "statusCode": 200,
         "body": "{\n  \"message\": \"Go Serverless v1.0! Your function executed successfully!\",\n  \"input\": {}\n}"
     }
+    ```
+4. 削除
+    ```sh
     $ serverless remove --verbose
     ```
 
