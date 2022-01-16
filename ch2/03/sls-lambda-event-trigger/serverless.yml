@@ -1,0 +1,31 @@
+service: sls-lambda-event-trigger
+frameworkVersion: ">=2.71.0 <3.0.0"
+
+plugins:
+  - serverless-prune-plugin
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: ap-northeast-1
+  profile: sls-test
+  deploymentBucket:
+    name: furu-sls-deployment-bucket-${self:provider.stage}
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - s3:
+          bucket: lambda-event-trigger-source-1
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploads/
+            - suffix: .jpg
+
+custom:
+  prune:
+    automatic: true
+    number: 3

@@ -8,7 +8,7 @@
     Managed Console で Lambda のイベントトリガーの感覚を掴む
 
 2. [チュートリアル: Amazon S3 トリガーを使用してサムネイル画像を作成する](https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/with-s3-tutorial.html) を実施
-    
+    - [成果物はここ](./lambda-s3)
     - AWS CLI で Lambda のイベントトリガーの感覚を掴む
     - 落とし穴
       - ローカル環境の Node.js バージョンが関数の Node.js バージョンと一致させておくこと
@@ -22,22 +22,55 @@
           --payload file://inputFile.txt outputfile.txt \ 
           --cli-binary-format raw-in-base64-out # <-- これ
           ```
+      - 謎にハマってしまって時間を溶かしてしまった、、、
 
 3. ServerlessFramework で実現
-    ```sh
-    $ npm install -g serverless
+    - イベントを検知して、Lambda関数を実行する
+    - [成果物はここ](./sls-lambda-event-trigger)
 
-    $ serverless --version
-    Framework Core: 2.71.0
-    Plugin: 5.5.3
-    SDK: 4.3.0
-    Components: 3.18.1
-    ```
 ## 疑問点
-### 1. xxx
-- Q: qqq
-- A: aaa
+### 1. S3 Bucket Name
+- Q: S3 Bucket名を変更せずに `sls deploy` と `sls remove` を繰り返しても、エラーにならないのはなんでだ？ S3 バケット名はグローバルで一意でなければならないのに、、、
+- A: ただの勘違い
+  - 存在しているS3 Bucketと名前衝突してはいけないだけ、
+  - `sls remove` で S3 Bucket を削除しているので、同名で作成しても問題なし
+
+### 2. Serverless Framework × IAM Role
+- Q1: `serverless.yml` に iam の設定記述していないのに、なぜ Lambda が S3 Event を検知したり、CloudWatch にログを出力できるんだ？
+- A1:
+  - Serverless Framework に設定した IAM ロールが `AdministratorAccess` 権限を持っていたから
+    - [AWS：Serverless Framework における IAM ロールの設定](https://pyteyon.hatenablog.com/entry/2019/08/08/224047)
+    - > デフォルトでは、LambdaファンクションはCloudWatchログの作成と書き込みの権限を持っています (DeepL翻訳)
+      - [IAM / Serverless Framework - Documentation](https://www.serverless.com/framework/docs/providers/aws/guide/iam/#:~:text=%20also%20by%20default%2C%20your%20lambda%20functions%20have%20permission%20to%20create%20and%20write%20to%20cloudwatch%20logs.)
+    - `sls deploy` すると、ポリシーステートメントが自動で Lambda に付与されてる
+      - Action: `lambda:InvokeFunction`
+      - Effect: `Allow`
+      - Conditions: 
+        ```json
+        {
+          "StringEquals": {
+            "AWS:SourceAccount": "472995540411"
+          },
+          "ArnLike": {
+            "AWS:SourceArn": "arn:aws:s3:::lambda-event-trigger-source-1"
+          }
+        }
+        ```
+
+- Q2: sls に設定した IAM User の権限は、sls の function roles にも権限が反映されている？
+- A2: 動きだけみると、反映されていないっぽい、
+  - lambda の policy を確認したら、デフォルトの権限しかなかった
+  - TODO: 有識者に質問する
+
+- Q3: 現場では、sls を実行する IAM User にどんな権限を付与している？（local と dev それぞれ気になる）
+- A3:
+  - TODO: わかり次第、記述する
+
+
 
 ## 参考記事
 - [チュートリアル: Amazon S3 トリガーを使用して Lambda 関数を呼び出す](https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/with-s3-example.html)
 - [AWSサービストリガによるLambda起動 ](https://future-architect.github.io/articles/20200722/)
+- [Serverless Frameworkの使い方まとめ](https://serverless.co.jp/blog/25/)
+- [The ABCs of IAM: Managing permissions with Serverless](https://www.serverless.com/blog/abcs-of-iam-permissions/)
+- [Serverless Framework: Minimal IAM role Permissions](https://dav009.medium.com/serverless-framework-minimal-iam-role-permissions-ba34bec0154e)
