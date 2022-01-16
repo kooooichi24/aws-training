@@ -66,6 +66,11 @@
 - A3:
   - TODO: わかり次第、記述する
 
+- Q4: Admin 権限を有している IAM User を sls に紐づけたくないんだけど、最小限の権限を持つ IAM User どうやって作るんだ？
+- A5: 
+  - [generator-serverless-policy](https://github.com/dancrumb/generator-serverless-policy) を使って、少し修正したらできた
+  - [Reference is here](https://www.serverless.com/blog/abcs-of-iam-permissions/#:~:text=Serverless%20use%20cases.-,To%20use%20it%2C%20first,yo%20generator-serverless-policyCopied,-%24%20npm%20install%20-g)
+  - [generate-yo-serverless-policy.json](./sls-lambda-event-trigger/generate-yo-serverless-policy.json) のポリシーを作成して、IAM User にアタッチした
 
 
 ## 参考記事
