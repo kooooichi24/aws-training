@@ -9,7 +9,10 @@ Serverless Framework で Hello World を実現してください
 S3 トリガーを使用して Lambda 関数を呼び出してください
 
 ### 04. Lambda から他の AWS サービスを呼び出す
-[チュートリアル: Amazon S3 トリガーを使用してサムネイル画像を作成する](https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/with-s3-tutorial.html) を Serverless Framework で実現してください
+成果物の要件を以下と定義します。
+1. S3 Bucket A に uploads/*.jpg がアップロードされた時、Lambda が発火すること
+2. Lambda は S3 Bucket の uploads 配下のオブジェクトを全て取得して、S3 Bucket A に json 形式で保存できること
+3. Server Frameworkで動く状態になっていること
 
 ### 05. REST API
 ### 04. Amazon EventBridge (CloudWatch Events) でAWS Lambdaを使用する

@@ -1,0 +1,40 @@
+service: sls-image-list-json
+frameworkVersion: ">=2.71.0 <3.0.0"
+
+plugins:
+  - serverless-prune-plugin
+  - serverless-plugin-typescript
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: ap-northeast-1
+  profile: sls-test
+  deploymentBucket:
+    name: furu-sls-deployment-bucket-${self:provider.stage}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+            - s3:PutObject
+          Resource: arn:aws:s3:::${self:service}-${self:provider.stage}-*
+
+functions:
+  createImageListJson:
+    handler: handler.createImageListJson
+    events:
+      - s3:
+          bucket: ${self:service}-${self:provider.stage}-bucket
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploads/
+            - suffix: .jpg
+
+custom:
+  prune:
+    automatic: true
+    number: 3
