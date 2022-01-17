@@ -5,8 +5,5 @@
   "license": "MIT",
   "dependencies": {
     "serverless-prune-plugin": "^2.0.1"
-  },
-  "devDependencies": {
-    "serverless-plugin-typescript": "^2.1.0"
   }
 }

@@ -3,7 +3,6 @@ frameworkVersion: ">=2.71.0 <3.0.0"
 
 plugins:
   - serverless-prune-plugin
-  - serverless-plugin-typescript
 
 provider:
   name: aws
