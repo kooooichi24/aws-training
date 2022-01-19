@@ -60,11 +60,13 @@
 - Q2: sls に設定した IAM User の権限は、sls の function roles にも権限が反映されている？
 - A2: 動きだけみると、反映されていないっぽい、
   - lambda の policy を確認したら、デフォルトの権限しかなかった
-  - TODO: 有識者に質問する
 
 - Q3: 現場では、sls を実行する IAM User にどんな権限を誰が付与している？（local と dev それぞれ気になる）
 - A3:
-  - TODO: わかり次第、記述する
+  - local環境
+    - offline 環境は環境は権限関係無い
+  - dev環境
+    - sls でデプロイするための権限を、dev 環境の CodeBuild に IAM ロールを付与することで実現している
 
 - Q4: Admin 権限を有している IAM User を sls に紐づけたくないんだけど、最小限の権限を持つ IAM User どうやって作るんだ？
 - A5: 
