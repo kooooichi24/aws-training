@@ -12,7 +12,9 @@
     "lint:fix": "run-s lint format",
     "test:unit": "jest",
     "lint-staged": "lint-staged",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "deploy:dev": "sls deploy --stage dev",
+    "remove:dev": "sls remove --stage dev"
   },
   "author": "Koichi Furukawa",
   "license": "ISC",
