@@ -45,5 +45,10 @@
       "npm run eslint",
       "npm run format"
     ]
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.49.0",
+    "dayjs": "^1.10.7",
+    "uuidv4": "^6.2.12"
   }
 }

@@ -25,15 +25,15 @@ provider:
             - dynamodb:DeleteItem
           Resource: arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TODO_TABLE}
   environment:
-    DYNAMODB_TODO_TABLE: ${self:service}-${opt:stage, self:provider.stage}-todo
+    DYNAMODB_TODO_TABLE: ${self:service}-dynamodb-todo-table-${opt:stage, self:provider.stage}
 
 functions:
   hello:
-    handler: handler.getodo
+    handler: handler.createTodo
     events:
       - http:
           path: /api/v1/todo
-          method: get
+          method: post
 
 resources:
   Resources:
