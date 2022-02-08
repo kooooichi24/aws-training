@@ -29,13 +29,13 @@ provider:
     DYNAMODB_TODO_TABLE: ${self:service}-dynamodb-todo-table-${opt:stage, self:provider.stage}
 
 functions:
-  createTodo:
+  create-todo:
     handler: handler.createTodo
     events:
       - http:
           path: /api/v1/todo
           method: post
-  getAllTodo:
+  get-all-todo:
     handler: handler.getAllTodo
     events:
       - http:
