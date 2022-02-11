@@ -10,7 +10,10 @@ import {
 import { uuid } from "uuidv4";
 import dayjs from "dayjs";
 
-const client = new DynamoDBClient({ region: "ap-northeast-1" });
+const client = new DynamoDBClient({
+  region: "localhost",
+  endpoint: "http://localhost:8000",
+});
 
 export async function getAllTodo(
   event: Lambda.APIGatewayEvent

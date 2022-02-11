@@ -4,12 +4,14 @@ frameworkVersion: "3.1.0"
 plugins:
   - serverless-prune-plugin
   - serverless-plugin-typescript
+  - serverless-dynamodb-local
+  - serverless-offline
 
 provider:
   name: aws
   runtime: nodejs14.x
   lambdaHashingVersion: 20201221
-  stage: ${opt:stage, self:custom:defaultStage}
+  stage: ${opt:stage, self:custom:defaultStage, 'local'}
   region: ap-northeast-1
   profile: sls-test
   deploymentBucket:
@@ -26,7 +28,7 @@ provider:
             - dynamodb:Scan
           Resource: arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TODO_TABLE}
   environment:
-    DYNAMODB_TODO_TABLE: ${self:service}-dynamodb-todo-table-${opt:stage, self:provider.stage}
+    DYNAMODB_TODO_TABLE: ${self:service}-dynamodb-todo-table-${self:provider.stage}
 
 functions:
   create-todo:
@@ -61,6 +63,13 @@ resources:
 
 custom:
   defaultStage: local
+  dynamodb:
+    stages:
+      - local
+    start:
+      port: 8000
+      migrate: true
+      noStart: true
   prune:
     automatic: true
     number: 3
