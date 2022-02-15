@@ -28,6 +28,8 @@
 - 統合タイプを説明してください
 - Lambda プロキシ統合・Lambda 非プロキシ統合を説明してください
 ### 08. Lambda Layer
+- Lambda Layer を導入するメリットを教えてください
+- Lambda Layer を導入してください
 
 ### 09. Lambdaが異常終了した際のアラート通知
 
