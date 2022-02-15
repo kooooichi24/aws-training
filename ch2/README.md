@@ -34,3 +34,11 @@
 ### 10. Lambda × SQS
 
 ### 11. Amazon EventBridge (CloudWatch Events) でAWS Lambdaを使用する
+
+DLQ SQS SNS
+metrics
+lambda layer
+Batch
+Step Function
+RDS Proxy × RDS for PostgreSQL
+Aurora Serverless v1 for PostgreSQL
