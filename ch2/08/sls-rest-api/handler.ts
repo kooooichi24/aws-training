@@ -1,6 +1,7 @@
 import Lambda from "aws-lambda";
 import {
   DynamoDBClient,
+  DynamoDBClientConfig,
   PutItemCommand,
   PutItemCommandInput,
   ScanCommand,
@@ -10,10 +11,16 @@ import {
 import { uuid } from "uuidv4";
 import dayjs from "dayjs";
 
-const client = new DynamoDBClient({
-  region: "localhost",
-  endpoint: "http://localhost:8000",
-});
+const configuration: DynamoDBClientConfig =
+  process.env.STAGE === "local"
+    ? {
+        region: "localhost",
+        endpoint: "http://localhost:8000",
+      }
+    : {
+        region: "ap-northeast-1",
+      };
+const client = new DynamoDBClient(configuration);
 
 export async function getAllTodo(
   event: Lambda.APIGatewayEvent
