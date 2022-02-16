@@ -6,6 +6,7 @@ plugins:
   - serverless-plugin-typescript
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-layers
 
 provider:
   name: aws
@@ -29,6 +30,7 @@ provider:
           Resource: arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TODO_TABLE}
   environment:
     DYNAMODB_TODO_TABLE: ${self:service}-dynamodb-todo-table-${self:provider.stage}
+    STAGE: ${self:provider.stage}
 
 functions:
   create-todo:
@@ -73,3 +75,5 @@ custom:
   prune:
     automatic: true
     number: 3
+  serverless-layers:
+    compatibleRuntimes: ["nodejs14.x"]

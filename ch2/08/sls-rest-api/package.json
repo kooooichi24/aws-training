@@ -43,6 +43,7 @@
     "rimraf": "^3.0.2",
     "serverless": "^3.1.0",
     "serverless-dynamodb-local": "^0.2.40",
+    "serverless-layers": "^2.5.4-beta.1",
     "serverless-offline": "^8.4.0",
     "serverless-plugin-typescript": "^2.1.1",
     "serverless-prune-plugin": "^2.0.1",
