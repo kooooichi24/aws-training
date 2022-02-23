@@ -32,7 +32,9 @@
 - Lambda Layer を導入してください
 
 ### 09. Lambdaが異常終了した際のアラート通知
-
+- 業務エラーとシステムエラーを説明してください
+- ログレベルを説明してください
+- Lambdaでエラー発生時に、Slackに通知してください
 ### 10. Lambda × SQS
 
 ### 11. Amazon EventBridge (CloudWatch Events) でAWS Lambdaを使用する
