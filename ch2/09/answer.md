@@ -90,8 +90,52 @@
 - [スタックトレース (stack trace)とは](https://wa3.i-3-i.info/word13281.html)
 
 ### 3. Lambdaでエラー発生時に、Slackに通知してください
-[成果物はここ](./sls-rest-api-notify-error)
+#### 3.1 メトリクスフィルター vs サブスクリプションフィルター (GUI編)
+ここら辺を読んだけど、違いがよくわからんので、作ってみることにした
+- [CloudWatch Logsの特定文字を検知してログ内容を通知するLambda Function](https://dev.classmethod.jp/articles/cwl-lambda-sns-publish/)
+- [CloudWatch LogsのLambdaによるログ監視](https://dev.classmethod.jp/articles/notify-error-cloudwatch-logs-with-lambda/)
 
+##### メトリクスフィルター
+業務で採用していたケース
+- できていること
+  - エラー内容がGoogle Chatに連携される
+- 利用プラグイン
+  - [Serverless AWS Alerts Plugin](https://www.serverless.com/plugins/serverless-plugin-aws-alerts) を利用
+- 構成
+  - CloudWatch Metrics Filter × CloudWatch Alerm × SNS × Lambda × GoogleChat
+
+下記記事を参考に、作成
+- [AWS Chatbotを使ってCloudWatch Logsのエラーログをslackに通知する](https://blog.chakimar.net/aws-chatbot-cloudwatch-logs/)
+
+概要
+- ロググループに、ERROR という文字に反応する、メトリクスフィルターを作成
+- n秒おきにメトリクスを監視して、閾値以上の場合にアラームを発砲する
+
+成果物
+- こんな感じでSlackのチャンネルに連携される
+![asset1](./assets//asset1.png)
+
+思ったこと
+- エラーが発生したことは通知されるけど、エラー内容が通知されないじゃん、、、
+- 調べてみた
+  > このとき「Lambda上でログの内容を取得したい」ということを追加で行う必要があることがわかりました。となると、Alarm経由では「特定のログが来たこと」は分かるのですが、「特定のログの内容」を知るためには、いい感じにさかのぼってあげる必要があるようでした。(こちらの記事を参考にしていました https://qiita.com/onooooo/items/f59c69e30dc5b477f9fd )
+  
+  [CloudWatch-LogsからリアルタイムにLambdaを呼ぶ](https://qiita.com/uetash/items/166e42b7842b48917451)
+- 確かに、業務でも、Lambdaで頑張ってた、、、、
+- serverless-plugin-aws-alerts は、EC2のCPU使用率やDynamoDBのスロットリング数などのAWSサービスの状態を監視できるし、Lambdaのエラー内容を通知できるから一石二鳥じゃんと思っていた。だけど、エラー内容を連携するには、工夫が必要そう。ただエラーを連携したいだけなのに、だいぶ手間がかかる印象
+- だからサブスクリプションフィルターなのか、、、
+
+##### サブスクリプションフィルター
+下記記事を参考に、作成
+- [CloudWatch-LogsからリアルタイムにLambdaを呼ぶ](https://qiita.com/uetash/items/166e42b7842b48917451)
+
+思ったこと
+- メトリックスは表示できないけど、エラーメッセージの取得は圧倒的に楽
+- Slackに通知したい場合は、いろいろ手段がありそう
+  - [AWSからSlackに通知する方法についてまとめた](https://dev.classmethod.jp/articles/how-to-send-message-by-aws/)
+
+#### 3.2 サブスクリプションフィルター(Serverless Framework編)
+[成果物はここ](./sls-rest-api-notify-error)
 
 
 #### 参考記事
@@ -104,8 +148,8 @@
 - [エラー制御の勘所とモニタリング](https://d1.awsstatic.com/serverless-jp/seminars/20210909_serverless_session2.pdf)
 
 ## 疑問点
-### 1. T
-- Q: Q
+### 1. CloudWatch
+- Q: エラー検知する方法はいくつかある？メトリクスフィルターとかサブスクリプションフィルターの記事があって、違いが理解できていない
 - A: A
 
 
