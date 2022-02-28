@@ -1,5 +1,5 @@
 service: sls-rest-api-notify-error
-frameworkVersion: "3.1.0"
+frameworkVersion: "2.72.3"
 
 plugins:
   - serverless-prune-plugin
@@ -7,6 +7,7 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline
   - serverless-layers
+  - serverless-plugin-aws-alerts
 
 provider:
   name: aws
@@ -33,13 +34,13 @@ provider:
     STAGE: ${self:provider.stage}
 
 functions:
-  create-todo:
+  createTodo:
     handler: handler.createTodo
     events:
       - http:
           path: /api/v1/todo
           method: post
-  get-all-todo:
+  getAllTodo:
     handler: handler.getAllTodo
     events:
       - http:
@@ -63,6 +64,45 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
+    ##################
+    # SNS -> Slack
+    ##################
+    Chatbot:
+      Type: AWS::Chatbot::SlackChannelConfiguration
+      Properties:
+        ConfigurationName: ${self:service}-chatbot-${self:provider.stage}
+        IamRoleArn: !GetAtt ChatbotIamRole.Arn
+        SlackChannelId: C034H91QVMZ # 環境ごとに通知するチャンネルを動的に変更したい
+        SlackWorkspaceId: T034H75DE7L
+        SnsTopicArns:
+          - arn:aws:sns:${self:provider.region}:${aws:accountId}:${self:service}-${self:provider.stage}-alerts-ok
+          - arn:aws:sns:${self:provider.region}:${aws:accountId}:${self:service}-${self:provider.stage}-alerts-alarm
+          - arn:aws:sns:${self:provider.region}:${aws:accountId}:${self:service}-${self:provider.stage}-alerts-insufficientData
+
+    ChatbotIamRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: chatbot-iam-role
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: chatbot.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: chatbot-iam-policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - cloudwatch:Describe*
+                    - cloudwatch:Get*
+                    - cloudwatch:List*
+                  Resource:
+                    - "*"
+
 custom:
   defaultStage: local
   dynamodb:
@@ -77,3 +117,39 @@ custom:
     number: 3
   serverless-layers:
     compatibleRuntimes: ["nodejs14.x"]
+  alerts:
+    stages:
+      - dev
+    dashboard: true
+    topics:
+      ok: ${self:service}-${self:provider.stage}-alerts-ok
+      alarm: ${self:service}-${self:provider.stage}-alerts-alarm
+      insufficientData: ${self:service}-${self:provider.stage}-alerts-insufficientData
+    definitions:
+      applicationErrors:
+        metric: applicationErrors
+        pattern: "ERROR"
+        threshold: 0
+        statistic: Sum
+        period: 60
+        evaluationPeriods: 1
+        datapointsToAlarm: 1
+        comparisonOperator: GreaterThanThreshold
+        treatMissingData: notBreaching
+      applicationWarnings:
+        metric: applicationWarnings
+        pattern: "WARN"
+        threshold: 0
+        statistic: Sum
+        period: 60
+        evaluationPeriods: 1
+        datapointsToAlarm: 1
+        comparisonOperator: GreaterThanThreshold
+        treatMissingData: notBreaching
+    alarms:
+      # - functionThrottles
+      # - functionErrors
+      # - functionInvocations
+      # - functionDuration
+      - applicationErrors
+      - applicationWarnings
