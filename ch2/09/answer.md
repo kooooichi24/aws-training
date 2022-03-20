@@ -150,7 +150,10 @@ $ npm i -D serverless-plugin-log-subscription
   - 公式に方法が記載されていた
     > [Lambda function directly:](https://github.com/dougmoscrop/serverless-plugin-log-subscription#:~:text=lambda%20function%20directly%3A)
 
-
+#### 結論
+- メトリクス情報とサブスクリプションフィルターを両方利用。
+- エラーの詳細内容はサブスクリプションフィルターでSlack連携
+- メトリクスフィルターは、エラー内容を取得するための処理がめんどくさいため、サブスプリプションフィルターを採用
 
 #### 参考記事
 - [サーバー内のエラーログ出力時、CloudWatch Logsサブスクリプションフィルタを使用し、LambdaでSlackに通知](https://qiita.com/holdout0521/items/e566faa62b02226f6749)
