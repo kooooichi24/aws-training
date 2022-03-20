@@ -1,4 +1,4 @@
-import Lambda from "aws-lambda";
+import Lambda, { CloudWatchLogsEvent } from "aws-lambda";
 import {
   DynamoDBClient,
   DynamoDBClientConfig,
@@ -10,6 +10,7 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { uuid } from "uuidv4";
 import dayjs from "dayjs";
+import zlib from "zlib";
 
 const configuration: DynamoDBClientConfig =
   process.env.STAGE === "local"
@@ -22,7 +23,7 @@ const configuration: DynamoDBClientConfig =
       };
 const client = new DynamoDBClient(configuration);
 
-export async function getAllTodo(
+export async function getTodos(
   event: Lambda.APIGatewayEvent
 ): Promise<Lambda.APIGatewayProxyResult> {
   const params: ScanCommandInput = {
@@ -78,4 +79,13 @@ export async function createTodo(
       input: event,
     }),
   };
+}
+
+export async function logsProcessor(event: CloudWatchLogsEvent): Promise<void> {
+  const payload = Buffer.from(event.awslogs.data, "base64");
+
+  const unzipeddata = zlib.unzipSync(payload);
+  const logdata = JSON.parse(unzipeddata.toString("utf8"));
+
+  console.log("WARN: ", JSON.stringify(logdata, null, 2));
 }

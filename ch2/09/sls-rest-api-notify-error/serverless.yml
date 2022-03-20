@@ -1,4 +1,4 @@
-service: sls-rest-api-notify-error
+service: project
 frameworkVersion: "2.72.3"
 
 plugins:
@@ -8,6 +8,7 @@ plugins:
   - serverless-offline
   - serverless-layers
   - serverless-plugin-aws-alerts
+  - serverless-plugin-log-subscription
 
 provider:
   name: aws
@@ -40,12 +41,15 @@ functions:
       - http:
           path: /api/v1/todo
           method: post
-  getAllTodo:
-    handler: handler.getAllTodo
+  getTodos:
+    handler: handler.getTodos
     events:
       - http:
           path: /api/v1/todo
           method: get
+  logsProcessor:
+    handler: handler.logsProcessor
+    logSubscription: false
 
 resources:
   Resources:
@@ -125,31 +129,13 @@ custom:
       ok: ${self:service}-${self:provider.stage}-alerts-ok
       alarm: ${self:service}-${self:provider.stage}-alerts-alarm
       insufficientData: ${self:service}-${self:provider.stage}-alerts-insufficientData
-    definitions:
-      applicationErrors:
-        metric: applicationErrors
-        pattern: "ERROR"
-        threshold: 0
-        statistic: Sum
-        period: 60
-        evaluationPeriods: 1
-        datapointsToAlarm: 1
-        comparisonOperator: GreaterThanThreshold
-        treatMissingData: notBreaching
-      applicationWarnings:
-        metric: applicationWarnings
-        pattern: "WARN"
-        threshold: 0
-        statistic: Sum
-        period: 60
-        evaluationPeriods: 1
-        datapointsToAlarm: 1
-        comparisonOperator: GreaterThanThreshold
-        treatMissingData: notBreaching
     alarms:
-      # - functionThrottles
-      # - functionErrors
-      # - functionInvocations
-      # - functionDuration
-      - applicationErrors
-      - applicationWarnings
+      - functionThrottles
+      - functionErrors
+      - functionInvocations
+      - functionDuration
+  logSubscription:
+    enabled: true
+    destinationArn: !GetAtt LogsProcessorLambdaFunction.Arn
+    addLambdaPermission: true
+    filterPattern: "?ERROR ?WARN"

@@ -136,6 +136,20 @@
 
 #### 3.2 サブスクリプションフィルター(Serverless Framework編)
 [成果物はここ](./sls-rest-api-notify-error)
+```sh
+$ npm i -D serverless-plugin-log-subscription
+```
+
+- 問題点
+  - サブスクリプションフィルターは1つしかフィルターできない。
+  - そのため、ERRORとWARNを検知する方法はない。
+  - しかも、LogSubscriptionのdestinationArnのLambdaは事前に作成しておく必要があるみたい、、
+  - ちょっとめんどくさいかも、、、、
+- 解決策
+  - そんなことはなかった
+  - 公式に方法が記載されていた
+    > [Lambda function directly:](https://github.com/dougmoscrop/serverless-plugin-log-subscription#:~:text=lambda%20function%20directly%3A)
+
 
 
 #### 参考記事

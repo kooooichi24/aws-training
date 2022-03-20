@@ -24,7 +24,8 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.49.0",
     "dayjs": "^1.10.7",
-    "uuidv4": "^6.2.12"
+    "uuidv4": "^6.2.12",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.92",
@@ -46,6 +47,7 @@
     "serverless-layers": "^2.5.4-beta.1",
     "serverless-offline": "^8.4.0",
     "serverless-plugin-aws-alerts": "^1.7.4",
+    "serverless-plugin-log-subscription": "^2.1.1",
     "serverless-plugin-typescript": "^2.1.1",
     "serverless-prune-plugin": "^2.0.1",
     "ts-jest": "^27.1.3",
